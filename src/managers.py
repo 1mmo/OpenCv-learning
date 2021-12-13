@@ -93,7 +93,7 @@ class CaptureManager(object):
 
     def startWritingVideo(
             self, filename,
-            encoding = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')):
+            encoding = cv.VideoWriter_fourcc('M', 'J', 'P', 'G')):
         """ Start writing exited frames to a video file """
         self._videoFilename = filename
         self._videoEncoding = encoding
@@ -123,3 +123,27 @@ class CaptureManager(object):
                     self.videoFilename, self._videEncoding,
                     fps, size)
         self._videoWriter.write(self._frame)
+
+
+class WindowManager(object):
+    def __init__(self, windowName, keypressCallback = None):
+        self.keypressCallback = keypressCallback
+        self._windowName = windowName
+        self._isWindowCreated = False
+
+    @property
+    def isWindowCreated(self):
+        return self._isWindowCreated
+    def createWindow(self):
+        cv.nameWindow(self._windowName)
+        self._isWindowCreated = True
+    def show(self, frame):
+        cv.imshow(self._windowName, frame)
+    def destroyWindow(self):
+        cv.destroyWindow(self._windowName)
+        cv.isWindowCreated = False
+    def processEvents(self):
+        keycode = cv.waitKey(1)
+        if self.keypressCallback is not None and keycode != -1:
+            self.keypressCallback(keycode)
+
