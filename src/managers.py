@@ -6,7 +6,7 @@ import time
 class CaptureManager(object):
     def __init__(self, capture, previewWindowManager = None,
                  shouldMirrorPreview = False):
-        self.previewWindowManager = previeWindowManager
+        self.previewWindowManager = previewWindowManager
         self.shouldMirrorPreview = shouldMirrorPreview
         self._capture = capture
         self._channel = 0
@@ -44,7 +44,7 @@ class CaptureManager(object):
     def enterFrame(self):
         """ Capture the next frame, if any """
         # But first, check that any previous frame was exited
-        assert not self.enteredFrame, \
+        assert not self._enteredFrame, \
                 'previous enterFrame() had no matching exitFame()'
         if self._capture is not None:
             self._enteredFrame = self._capture.grab()
@@ -70,7 +70,7 @@ class CaptureManager(object):
         # Draw to the window, if any 
         if self.previewWindowManager is not None:
             if self.shouldMirrorPreview:
-                mirroredFrame = numpy.fliplr(self._frame)
+                mirroredFrame = np.fliplr(self._frame)
                 self.previewWindowManager.show(mirroredFrame)
             else:
                 self.previewWindowManager.show(self._frame)
@@ -135,7 +135,7 @@ class WindowManager(object):
     def isWindowCreated(self):
         return self._isWindowCreated
     def createWindow(self):
-        cv.nameWindow(self._windowName)
+        cv.namedWindow(self._windowName)
         self._isWindowCreated = True
     def show(self, frame):
         cv.imshow(self._windowName, frame)
