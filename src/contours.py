@@ -2,7 +2,8 @@ import cv2 as cv
 import numpy as np
 
 
-img = cv.imread("photos/frog.jpg")
+img = cv.imread("photos/me.jpg")
+print(img.shape)
 cv.imshow('Frog', img)
 
 blank = np.zeros(img.shape, dtype='uint8')
@@ -22,9 +23,10 @@ cv.imshow('Canny Edges', canny)
 
 
 contours, hierarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
-print(f'{len(contours)} contour(s) found!')
 
+blank = cv.resize(blank, (1000, 1000), interpolation=cv.INTER_CUBIC)
 cv.drawContours(blank, contours, -1, (0, 0, 255), 1)
 cv.imshow('Contours Drawn', blank)
+cv.imwrite("Contours.jpg", blank)
 
 cv.waitKey(0)

@@ -14,7 +14,7 @@ img = cv2.drawContours(color, contours, -1, (0,255,0), 2)
 #cv2.waitKey()
 #cv2.destroyAllWindows()
 
-img = cv2.pyrDown(cv2.imread("photos/frog.jpg", cv2.IMREAD_UNCHANGED))
+img = cv2.pyrDown(cv2.imread("photos/katya.jpg", cv2.IMREAD_UNCHANGED))
 
 ret, thresh = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 127,
                             255, cv2.THRESH_BINARY)
