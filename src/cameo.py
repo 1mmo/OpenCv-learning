@@ -1,6 +1,7 @@
 import cv2 as cv
-import filters
 
+import filters
+import depth
 from managers import WindowManager, CaptureManager
 
 
@@ -40,6 +41,48 @@ class Cameo(object):
         elif keycode == 27: # escape
             self._windowManager.destroyWindow()
 
+
+class CameoDepth(Cameo):
+    def __init__(self):
+        self._windowManager = WindowManager("Cameo", self.onKeypress)
+        device = cv.CAP_OPENNI2 # for Kinect
+        #device = cv.CAP_OPENNI2_ASUS # for Xtion or Structure
+        self._captureManager = CaptureManager(
+                cv.VideoCapture(device),
+                self._windowManager, True)
+        #self._curveFilter = filters.BGRPortraCurveFilter()
+
+    def run(self):
+        """ Run the main loop."""
+        self._windowManager.createWindow()
+        while self._windowManager.isWindowCreated:
+            self._captureManager.enterFrame()
+            self._captureManager.channel = cv.CAP_OPENNI_DISPARITY_MAP
+            disparityMap = self._captureManager.frame
+            self._captureManager.channel = cv.CAP_OPENNI_VALID_DEPTH_MASK
+            validDepthMask = self._captureManager.frame
+            self._captureManager.channel = cv.CAP_OPENNI_BGR_IMAGE
+            frame = self._captureManager.frame
+            if frame is None:
+                # Failed to capture a BGR frame.
+                # Try to capture an infrared frame instead.
+                self._captureManager.channel = cv.CAP_OPENNI_IR_IMAGE
+                frame = self._captureManager.frame
+            if frame is not None:
+                # Make everything except the median layer black.
+                mask = depth.createMedianMask(disparityMap, validDepthMask)
+                frame[mask == 0] = 0
+
+                if self._captureManager.channel == \
+                        cv2.CAP_OPENNI_BGR_IMAGE:
+                            # A BGR frame was captured.
+                            # Apply filters to it.
+                            filters.strokeEdges(frame, frame)
+                            self._curveFilter.apply(frame, frame)
+            self._captureManager.exitFrame()
+            self._windowManager.processEvents()
+
 if __name__ == "__main__":
-    Cameo().run()
+    #Cameo().run() # uncomment for ordinary camera
+    CameoDepth().run() # uncomment for depth camera
 
