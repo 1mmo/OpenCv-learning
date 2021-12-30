@@ -42,6 +42,15 @@ class BlurFilter(VConvolutionFilter):
         VConvolutionFilter.__init__(self, kernel)
 
 
+class EmbossFilter(VConvolutionFilter):
+    """An emboss filter with 1-pixel radius."""
+    def __init__(self):
+        kernel = np.array([[-2, -1, 0],
+                           [-1, 1, 1],
+                           [0, 1, 2]])
+        VconvolutionFilter.__init__(self, kernel)
+
+
 def strokeEdges(src, dst, blurKsize=7, edgeKsize=5):
     if blurKsize >= 3:
         blurredSrc = cv.medianBlur(src, blurKsize)

@@ -11,6 +11,7 @@ class Cameo(object):
         self._captureManager = CaptureManager(cv.VideoCapture(0), 
                                               self._windowManager, 
                                               True)
+        self._embossFilter = filters.EmbossFilter()
 
     def run(self):
         """ Run the main loop. """
@@ -19,7 +20,8 @@ class Cameo(object):
             self._captureManager.enterFrame()
             frame = self._captureManager.frame
             if frame is not None:
-                filters.strokeEdges(frame, frame)
+                #filters.strokeEdges(frame, frame)
+                self._embossFilter.apply(frame, frame)
             self._captureManager.exitFrame()
             self._windowManager.processEvents()
 
@@ -83,6 +85,6 @@ class CameoDepth(Cameo):
             self._windowManager.processEvents()
 
 if __name__ == "__main__":
-    #Cameo().run() # uncomment for ordinary camera
-    CameoDepth().run() # uncomment for depth camera
+    Cameo().run() # uncomment for ordinary camera
+    #CameoDepth().run() # uncomment for depth camera
 
