@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 # Load the image.
 img0 = cv2.imread('photos/nasa_logo.png', cv2.IMREAD_GRAYSCALE)
-img1 = cv2.imread('photos/kennedy_space_center.jpg', cv2.IMREAD_GRAYSCALE)
+img1 = cv2.imread('photos/frog.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Perform ORB feature detection and description.
 orb = cv2.ORB_create()
@@ -19,10 +19,24 @@ pairs_of_matches = bf.knnMatch(des0, des1, k=2)
 pairs_of_matches = sorted(pairs_of_matches, key=lambda x:x[0].distance)
 
 
+# Show the matches.
+#img_pairs_of_matches = cv2.drawMatchesKnn(img0, kp0, img1, kp1, 
+#        pairs_of_matches[:25],  img1, 
+#        flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
+#plt.imshow(img_pairs_of_matches)
+#plt.show()
+
+# Apply the ration test
+matches = [x[0] for x in pairs_of_matches
+           if len(x) > 1 and x[0].distance < 0.8 * x[1].distance]
+
+print(matches)
+
+# Draw the best 25 matches.
+img_matches = cv2.drawMatches(
+        img0, kp0, img1, kp1, matches[:25], img1,
+        flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
 
 # Show the matches.
-img_pairs_of_matches = cv2.drawMatchesKnn(img0, kp0, img1, kp1, 
-        pairs_of_matches[:25],  img1, 
-        flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
-plt.imshow(img_pairs_of_matches)
+plt.imshow(img_matches)
 plt.show()
