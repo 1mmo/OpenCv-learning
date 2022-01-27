@@ -8,10 +8,12 @@ img[50:150, 50:150] = 255
 ret, thresh = cv2.threshold(img, 127, 255, 0)
 contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE,
                                        cv2.CHAIN_APPROX_SIMPLE)
+cont = list(contours)
+print(type(cont))
 color = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 img = cv2.drawContours(color, contours, -1, (0,255,0), 2)
-#cv2.imshow('contours', color)
-#cv2.waitKey()
+cv2.imshow('Cont', color)
+cv2.waitKey()
 #cv2.destroyAllWindows()
 
 img = cv2.pyrDown(cv2.imread("photos/katya.jpg", cv2.IMREAD_UNCHANGED))
