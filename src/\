@@ -1,5 +1,4 @@
 import cv2
-from matplotlib import pyplot as plt
 
 
 OPENCV_MAJOR_VERSION = int(cv2.__version__.split('.')[0])
@@ -21,12 +20,12 @@ gray_background = cv2.GaussianBlur(gray_background,
                                   (BLUR_RADIUS, BLUR_RADIUS), 0)
 
 success, frame = cap.read()
-found_countours = []
 time_list = []
 time = 0
 while success:
     time += 1
     time_list.append(time)
+    print(time)
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray_frame = cv2.GaussianBlur(gray_frame,
                                  (BLUR_RADIUS, BLUR_RADIUS), 0)
@@ -43,14 +42,15 @@ while success:
     else:
         _, contours, hier = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                                              cv2.CHAIN_APPROX_SIMPLE)
+    found_countours = []
     for c in contours:
         if cv2.contourArea(c) > 4000:
             x, y, w, h = cv2.boundingRect(c)
             P_rectangle = x + y + w + h
             found_countours.append(P_rectangle)
+            print(found_countours)
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 255, 0), 2)
-    #plt.plot(time_list, found_countours)
-    #plt.show()
+    #print(f' FOUND = {found_contours}')
     cv2.imshow('diff', diff)
     cv2.imshow('thresh', thresh)
     cv2.imshow('detection', frame)
@@ -60,8 +60,3 @@ while success:
         break
 
     success, frame = cap.read()
-
-print(len(time_list))
-print(len(found_countours))
-plt.plot(time_list[:len(found_countours)], found_countours)
-plt.show()
